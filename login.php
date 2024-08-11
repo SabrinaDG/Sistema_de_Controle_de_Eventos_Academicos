@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Inicia a sessão e armazena os dados do usuário
         session_start();
         $_SESSION['user_id'] = $user_data['id']; // Armazena o ID do usuário na sessão
-
+        $_SESSION['username'] = $user_data['nome']; // Armazena o nome do usuário na sessão
+    
         // Envia uma resposta JSON indicando sucesso
         header('Content-Type: application/json');
         echo json_encode([
@@ -46,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'message' => 'Logado com sucesso'
         ]);
         exit();
-    } else {
+    }
+     else {
         // Envia uma mensagem de erro em formato JSON
         header('Content-Type: application/json');
         echo json_encode([

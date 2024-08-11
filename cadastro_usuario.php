@@ -1,5 +1,5 @@
 <?php
-require 'connect.inc.php'; // Inclui o arquivo de conexão ao banco de dados
+require 'connect.inc.php'; 
 
 class Usuarios {
     private $conn;
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Cria o novo usuário
         if ($usuario->create($_POST)) {
-            header('Location: login.html'); // Redireciona para a página de login
+            header('Location: index.html'); 
             exit();
         } else {
             $error_message = "Erro ao cadastrar o usuário.";
