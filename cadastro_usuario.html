@@ -1,93 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
 
-  <title>Cadastro de Usuário</title>
+    <title>Cadastro de Usuário</title>
 
-  <script>
-    // Função para validar a matrícula
-    function validarFormulario(event) {
-      var matricula = document.getElementById('matricula').value;
-      var errorMensagem = '';
+    <script>
+      // Função para validar a matrícula
+      function validarFormulario(event) {
+        var matricula = document.getElementById("matricula").value;
+        var errorMensagem = "";
 
-      if (matricula.length !== 4 || isNaN(matricula)) {
-        errorMensagem = 'A matrícula deve ter exatamente 4 dígitos.';
+        if (matricula.length !== 4 || isNaN(matricula)) {
+          errorMensagem = "A matrícula deve ter exatamente 4 dígitos.";
+        }
+
+        // Exibe a mensagem de erro se necessário
+        var errorElement = document.getElementById("matriculaError");
+        if (errorMensagem) {
+          errorElement.textContent = errorMensagem;
+          event.preventDefault(); // Impede o envio do formulário
+        } else {
+          errorElement.textContent = "";
+        }
       }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <section class="vh-100">
+        <div class="container py-5 h-100">
+          <div
+            class="row d-flex justify-content-center align-items-center h-100"
+          >
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card shadow-sm" style="border-radius: 1rem">
+                <div class="card-body p-5 text-center">
+                  <h3 class="mb-5">Cadastro de Usuário</h3>
 
-      // Exibe a mensagem de erro se necessário
-      var errorElement = document.getElementById('matriculaError');
-      if (errorMensagem) {
-        errorElement.textContent = errorMensagem;
-        event.preventDefault(); // Impede o envio do formulário
-      } else {
-        errorElement.textContent = '';
-      }
-    }
-  </script>
-</head>
-<body>
-  <div class="container">
-    <section class="vh-100">
-      <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div class="card shadow-sm" style="border-radius: 1rem;">
-              <div class="card-body p-5 text-center">
-                <h3 class="mb-5">Cadastro de Usuário</h3>
-
-                <!-- Exibição de mensagens de erro -->
-                <?php if (!empty($error_message)): ?>
+                  <!-- Exibição de mensagens de erro -->
+                  <?php if (!empty($error_message)): ?>
                   <div class="alert alert-danger" role="alert">
                     <?php echo $error_message; ?>
                   </div>
-                <?php endif; ?>
+                  <?php endif; ?>
 
-                <form action="cadastro_usuario.php" method="post" onsubmit="validarFormulario(event)">
-                  <!-- Nome -->
-                  <div class="form-outline mb-4">
-                    <label class="form-label" for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" class="form-control" required >
-                  </div>
+                  <form
+                    action="cadastro_usuario.php"
+                    method="post"
+                    onsubmit="validarFormulario(event)"
+                  >
+                    <!-- Nome -->
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="nome">Nome:</label>
+                      <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        class="form-control"
+                        required
+                      />
+                    </div>
 
-                  <!-- E-mail -->
-                  <div class="form-outline mb-4">
-                    <label class="form-label" for="email">E-mail:</label>
-                    <input type="email" id="email" name="email" class="form-control" required >
-                  </div>
+                    <!-- E-mail -->
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="email">E-mail:</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        required
+                      />
+                    </div>
 
-                  <!-- Matrícula -->
-                  <div class="form-outline mb-4">
-                    <label class="form-label" for="matricula">Matrícula:</label>
-                    <input type="text" id="matricula" name="matricula" class="form-control" required>
-                    <div id="matriculaError" class="text-danger"></div>
-                  </div>
+                    <!-- Matrícula -->
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="matricula"
+                        >Matrícula:</label
+                      >
+                      <input
+                        type="text"
+                        id="matricula"
+                        name="matricula"
+                        class="form-control"
+                        required
+                      />
+                      <div id="matriculaError" class="text-danger"></div>
+                    </div>
 
-                  <!-- Senha -->
-                  <div class="form-outline mb-4">
-                    <label class="form-label" for="senha">Senha:</label>
-                    <input type="password" id="senha" name="senha" class="form-control" required>
-                  </div>
+                    <!-- Senha -->
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="senha">Senha:</label>
+                      <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        class="form-control"
+                        required
+                      />
+                    </div>
 
-                  <button class="btn btn-primary btn-lg btn-block" type="submit">Cadastrar</button>
-                </form>
+                    <!-- Tipo de Usuário -->
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="tipoUsuario"
+                        >Tipo de Usuário:</label
+                      >
+                      <select
+                        id="tipoUsuario"
+                        name="tipoUsuario"
+                        class="form-control"
+                        required
+                      >
+                        <option value="usuario">Usuário</option>
+                        <option value="administrador">Administrador</option>
+                      </select>
+                    </div>
+
+                    <button
+                      class="btn btn-primary btn-lg btn-block"
+                      type="submit"
+                    >
+                      Cadastrar
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
 
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>

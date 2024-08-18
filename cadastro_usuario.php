@@ -13,12 +13,20 @@ class Usuarios {
         $email = $this->conn->real_escape_string($post['email']);
         $matricula = $this->conn->real_escape_string($post['matricula']);
         $senha = password_hash($post['senha'], PASSWORD_DEFAULT); // Criptografa a senha
-
-        $sql = "INSERT INTO Usuarios (nome, email, matricula, senha)
-                VALUES ('$nome', '$email', '$matricula', '$senha')";
-
-        return $this->conn->query($sql);
+        $tipoUsuario = $this->conn->real_escape_string($post['tipoUsuario']); // Obtém o tipo de usuário
+    
+        $sql = "INSERT INTO Usuarios (nome, email, matricula, senha, tipoUsuario)
+                VALUES ('$nome', '$email', '$matricula', '$senha', '$tipoUsuario')";
+    
+        if (!$this->conn->query($sql)) {
+            echo "Erro ao executar o SQL: " . $this->conn->error;
+            return false;
+        }
+    
+        return true;
     }
+    
+    
 
     public function matriculaExists($matricula) {
         $matricula = $this->conn->real_escape_string($matricula);
