@@ -48,7 +48,7 @@ $username = $_SESSION['username'];
                 aria-labelledby="userDropdown">
                 <a class="dropdown-item"  href="gerenciar_dados.php">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Gerenciar dados
+                    Gerenciar dados- Usuário
                 </a>
                 <a class="dropdown-item"  href="sobre.html">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -57,7 +57,7 @@ $username = $_SESSION['username'];
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="logout.php">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Logout
+                    Sair
                 </a>
             </div>
         </li>

@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Dados- Usuário</title>
+    <title>Gerenciar Dados- Administrador</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script>
         function habilitarEdicao() {
@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container fluid  mt-5">
-        <a href="home.php" class="btn btn-secondary mb-3">Voltar para a Página Inicial</a>
-        <h2>Gerenciar Dados- Usuário</h2>
+        <a href="administradores_home.php" class="btn btn-secondary mb-3">Voltar para a Página Inicial</a>
+        <h2>Gerenciar Dados- Administrador</h2>
         <form method="post">
             <div class="form-group">
                 <label for="nome">Nome</label>
