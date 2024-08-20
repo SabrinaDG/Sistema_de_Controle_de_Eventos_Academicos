@@ -11,13 +11,38 @@ if (!isset($_SESSION['user_id'])) {
 // Exibe o nome do usuário logado
 $username = $_SESSION['username'];
 
-// Busca eventos
-$sql_events = "SELECT * FROM eventos";
+$limit = 10; // Número de itens por página
+
+// Página atual para eventos
+$page_eventos = isset($_GET['page_eventos']) ? (int)$_GET['page_eventos'] : 1;
+$offset_eventos = ($page_eventos - 1) * $limit;
+
+// Página atual para cursos
+$page_cursos = isset($_GET['page_cursos']) ? (int)$_GET['page_cursos'] : 1;
+$offset_cursos = ($page_cursos - 1) * $limit;
+
+
+
+// Busca eventos com paginação
+$sql_events = "SELECT * FROM eventos LIMIT $limit OFFSET $offset_eventos";
 $events_result = $conn->query($sql_events);
 
-// Busca cursos
-$sql_courses = "SELECT * FROM cursos";
+// Contar o total de eventos para calcular o número total de páginas
+$sql_count_events = "SELECT COUNT(*) AS total FROM eventos";
+$total_events_result = $conn->query($sql_count_events);
+$total_events = $total_events_result->fetch_assoc()['total'];
+$total_pages_events = ceil($total_events / $limit);
+
+// Busca cursos com paginação
+$sql_courses = "SELECT * FROM cursos LIMIT $limit OFFSET $offset_cursos";
 $courses_result = $conn->query($sql_courses);
+
+// Contar o total de cursos para calcular o número total de páginas
+$sql_count_courses = "SELECT COUNT(*) AS total FROM cursos";
+$total_courses_result = $conn->query($sql_count_courses);
+$total_courses = $total_courses_result->fetch_assoc()['total'];
+$total_pages_courses = ceil($total_courses / $limit);
+
 
 // Função para formatar a data e hora no formato dd/mm/aaaa hh:mm
 function format_datetime($datetime) {
@@ -107,6 +132,27 @@ function format_datetime($datetime) {
             <?php endwhile; ?>
         </tbody>
     </table>
+<!-- Paginação para Eventos -->
+<nav aria-label="Page navigation for events">
+  <ul class="pagination">
+    <li class="page-item <?php if ($page_eventos <= 1) echo 'disabled'; ?>">
+      <a class="page-link" href="<?php if ($page_eventos > 1) { echo "?page_eventos=" . ($page_eventos - 1) . "&page_cursos=$page_cursos"; } ?>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <?php for ($i = 1; $i <= $total_pages_events; $i++) : ?>
+      <li class="page-item <?php if ($i == $page_eventos) echo 'active'; ?>">
+        <a class="page-link" href="?page_eventos=<?php echo $i; ?>&page_cursos=<?php echo $page_cursos; ?>"><?php echo $i; ?></a>
+      </li>
+    <?php endfor; ?>
+    <li class="page-item <?php if ($page_eventos >= $total_pages_events) echo 'disabled'; ?>">
+      <a class="page-link" href="<?php if ($page_eventos < $total_pages_events) { echo "?page_eventos=" . ($page_eventos + 1) . "&page_cursos=$page_cursos"; } ?>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
 
     <!-- Tabela de Cursos -->
     <h2 class="mt-5">Cursos</h2>
@@ -146,6 +192,28 @@ function format_datetime($datetime) {
             <?php endwhile; ?>
         </tbody>
     </table>
+<!-- Paginação para Cursos -->
+<nav aria-label="Page navigation for courses">
+  <ul class="pagination">
+    <li class="page-item <?php if ($page_cursos <= 1) echo 'disabled'; ?>">
+      <a class="page-link" href="<?php if ($page_cursos > 1) { echo "?page_cursos=" . ($page_cursos - 1) . "&page_eventos=$page_eventos"; } ?>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <?php for ($i = 1; $i <= $total_pages_courses; $i++) : ?>
+      <li class="page-item <?php if ($i == $page_cursos) echo 'active'; ?>">
+        <a class="page-link" href="?page_cursos=<?php echo $i; ?>&page_eventos=<?php echo $page_eventos; ?>"><?php echo $i; ?></a>
+      </li>
+    <?php endfor; ?>
+    <li class="page-item <?php if ($page_cursos >= $total_pages_courses) echo 'disabled'; ?>">
+      <a class="page-link" href="<?php if ($page_cursos < $total_pages_courses) { echo "?page_cursos=" . ($page_cursos + 1) . "&page_eventos=$page_eventos"; } ?>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
 
 </div>
 

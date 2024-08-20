@@ -35,31 +35,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Exclui evento
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $sql = "DELETE FROM eventos WHERE id = ?";
-    $stm = $conn->prepare($sql);
-    $stm->bind_param("i", $id);
-    if ($stm->execute()) {
-        echo "<script>alert('Evento excluído com sucesso!'); window.location.href='gerenciar_eventos.php';</script>";
+    
+    // Verificar se há cursos associados ao evento
+    $sql_check_courses = "SELECT COUNT(*) as total FROM cursos WHERE evento_id = ?";
+    $stm_check_courses = $conn->prepare($sql_check_courses);
+    $stm_check_courses->bind_param("i", $id);
+    $stm_check_courses->execute();
+    $result = $stm_check_courses->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row['total'] > 0) {
+        // Existem cursos associados ao evento
+        echo "<script>alert('PARA EXCLUIR ESTE EVENTO, EXCLUA PRIMEIRO OS CURSOS RELACIONADOS.'); window.location.href='gerenciar_eventos.php';</script>";
     } else {
-        echo "<script>alert('Erro ao excluir evento.');</script>";
+        // Não existem cursos associados, pode excluir o evento
+        $sql_delete_event = "DELETE FROM eventos WHERE id = ?";
+        $stm_delete_event = $conn->prepare($sql_delete_event);
+        $stm_delete_event->bind_param("i", $id);
+        if ($stm_delete_event->execute()) {
+            echo "<script>alert('Evento excluído com sucesso!'); window.location.href='gerenciar_eventos.php';</script>";
+        } else {
+            echo "<script>alert('Erro ao excluir evento.');</script>";
+        }
     }
 }
+
 
 // Busca eventos
 $sql = "SELECT * FROM eventos";
 $events = $conn->query($sql);
-
-// Função para formatar a data e hora no formato dd/mm/aaaa hh:mm
-function format_datetime($datetime) {
-    $dateTime = new DateTime($datetime);
-    return $dateTime->format('d/m/Y H:i');
-}
-
-// Função para formatar a data e hora para datetime-local
-function format_for_datetime_local($datetime) {
-    $dateTime = new DateTime($datetime);
-    return $dateTime->format('Y-m-d\TH:i');
-}
 ?>
 
 <!DOCTYPE html>
@@ -114,14 +118,14 @@ function format_for_datetime_local($datetime) {
                         <td><?php echo htmlspecialchars($row['id']); ?></td>
                         <td><?php echo htmlspecialchars($row['titulo']); ?></td>
                         <td><?php echo htmlspecialchars($row['descricao']); ?></td>
-                        <td><?php echo format_datetime($row['data_inicio']); ?></td>
-                        <td><?php echo format_datetime($row['data_fim']); ?></td>
+                        <td><?php echo htmlspecialchars($row['data_inicio']); ?></td>
+                        <td><?php echo htmlspecialchars($row['data_fim']); ?></td>
                         <td>
                             <a href="gerenciar_eventos.php?delete=<?php echo htmlspecialchars($row['id']); ?>"
                                 class="btn btn-danger btn-sm"
                                 onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
                             <button class="btn btn-info btn-sm"
-                                onclick="editEvent(<?php echo htmlspecialchars($row['id']); ?>, '<?php echo htmlspecialchars($row['titulo']); ?>', '<?php echo htmlspecialchars($row['descricao']); ?>', '<?php echo format_for_datetime_local($row['data_inicio']); ?>', '<?php echo format_for_datetime_local($row['data_fim']); ?>')">Editar</button>
+                                onclick="editEvent(<?php echo htmlspecialchars($row['id']); ?>, '<?php echo htmlspecialchars($row['titulo']); ?>', '<?php echo htmlspecialchars($row['descricao']); ?>', '<?php echo htmlspecialchars($row['data_inicio']); ?>', '<?php echo htmlspecialchars($row['data_fim']); ?>')">Editar</button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
