@@ -88,6 +88,19 @@ function format_datetime($datetime) {
                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                         Gerenciar dados - Administrador
                     </a>
+                    <a class="dropdown-item" href="relatorio_usuarios.php">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Relatório de Usuários Cadastrados
+                    </a>
+                    <a class="dropdown-item" href="relatorio_cursos.php">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Relatório de Cursos e Eventos
+                    </a>
+                    <a class="dropdown-item" href="relatorio_inscricoes.php">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Relatório de Inscrições
+                    </a>
+                    
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="logout.php">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>

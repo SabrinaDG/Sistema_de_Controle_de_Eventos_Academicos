@@ -67,6 +67,10 @@ if ($evento_id) {
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Relatório dos cursos inscrito
                 </a>
+                <a class="dropdown-item" href="ranking.php">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Ranking de incrições- alunos gerais
+                </a>
                 <a class="dropdown-item" href="sobre.html">
                     <i class="fas fa-info-circle fa-sm fa-fw mr-2 text-gray-400"></i>
                     Sobre

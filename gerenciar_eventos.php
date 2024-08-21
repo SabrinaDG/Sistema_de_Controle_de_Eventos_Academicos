@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Exclui evento
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    
+
     // Verificar se há cursos associados ao evento
     $sql_check_courses = "SELECT COUNT(*) as total FROM cursos WHERE evento_id = ?";
     $stm_check_courses = $conn->prepare($sql_check_courses);
@@ -60,10 +60,29 @@ if (isset($_GET['delete'])) {
     }
 }
 
+// Função para buscar eventos com paginação
+function fetchEvents($conn, $limit, $offset)
+{
+    $sql = "SELECT * FROM eventos LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 
-// Busca eventos
-$sql = "SELECT * FROM eventos";
-$events = $conn->query($sql);
+// Contar total de eventos
+$total_events_query = "SELECT COUNT(*) as total FROM eventos";
+$total_result = $conn->query($total_events_query);
+$total_row = $total_result->fetch_assoc();
+$total_events = $total_row['total'];
+
+// Configurações de paginação
+$limit = 1; // Número de eventos por página
+$total_pages = ceil($total_events / $limit);
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($current_page - 1) * $limit;
+
+$events = fetchEvents($conn, $limit, $offset);
 ?>
 
 <!DOCTYPE html>
@@ -100,38 +119,61 @@ $events = $conn->query($sql);
             <input type="hidden" name="id" id="event_id">
             <button type="submit" class="btn btn-primary">Salvar Evento</button>
         </form>
+
+        <!-- Eventos Existentes -->
         <h3 class="mt-5">Eventos Existentes</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Título</th>
-                    <th>Descrição</th>
-                    <th>Data Início</th>
-                    <th>Data Fim</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $events->fetch_assoc()): ?>
+        <div id="eventos-container">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['id']); ?></td>
-                        <td><?php echo htmlspecialchars($row['titulo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['descricao']); ?></td>
-                        <td><?php echo htmlspecialchars($row['data_inicio']); ?></td>
-                        <td><?php echo htmlspecialchars($row['data_fim']); ?></td>
-                        <td>
-                            <a href="gerenciar_eventos.php?delete=<?php echo htmlspecialchars($row['id']); ?>"
-                                class="btn btn-danger btn-sm"
-                                onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
-                            <button class="btn btn-info btn-sm"
-                                onclick="editEvent(<?php echo htmlspecialchars($row['id']); ?>, '<?php echo htmlspecialchars($row['titulo']); ?>', '<?php echo htmlspecialchars($row['descricao']); ?>', '<?php echo htmlspecialchars($row['data_inicio']); ?>', '<?php echo htmlspecialchars($row['data_fim']); ?>')">Editar</button>
-                        </td>
+                        <th>#</th>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Data Início</th>
+                        <th>Data Fim</th>
+                        <th>Ações</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="eventos-tbody">
+                    <?php while ($row = $events->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['id']) ?></td>
+                            <td><?= htmlspecialchars($row['titulo']) ?></td>
+                            <td><?= htmlspecialchars($row['descricao']) ?></td>
+                            <td><?= htmlspecialchars($row['data_inicio']) ?></td>
+                            <td><?= htmlspecialchars($row['data_fim']) ?></td>
+                            <td>
+                                <a href="gerenciar_eventos.php?delete=<?= htmlspecialchars($row['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                                <button class="btn btn-info btn-sm" onclick="editEvent(<?= htmlspecialchars($row['id']) ?>, '<?= htmlspecialchars($row['titulo']) ?>', '<?= htmlspecialchars($row['descricao']) ?>', '<?= htmlspecialchars($row['data_inicio']) ?>', '<?= htmlspecialchars($row['data_fim']) ?>')">Editar</button>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item <?= $current_page == 1 ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $current_page - 1 ?>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?= $current_page == $i ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+                <li class="page-item <?= $current_page == $total_pages ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $current_page + 1 ?>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+
     <script>
         function editEvent(id, titulo, descricao, data_inicio, data_fim) {
             document.getElementById('event_id').value = id;
@@ -140,6 +182,7 @@ $events = $conn->query($sql);
             document.getElementById('data_inicio').value = data_inicio;
             document.getElementById('data_fim').value = data_fim;
         }
+        
     </script>
 </body>
 
