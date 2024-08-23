@@ -2,13 +2,11 @@
 session_start();
 require 'connect.inc.php';
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.html');
     exit();
 }
 
-// Verifica se o ID do curso foi fornecido
 if (!isset($_GET['curso_id'])) {
     echo "ID do curso não fornecido.";
     exit();
@@ -21,7 +19,6 @@ function format_datetime($datetime) {
 $curso_id = intval($_GET['curso_id']);
 $usuario_id = $_SESSION['user_id'];
 
-// Verifica se o usuário já está inscrito no curso
 $sql_verifica_inscricao = "
     SELECT id 
     FROM inscricoes 
@@ -33,7 +30,6 @@ $stmt_verifica_inscricao->execute();
 $stmt_verifica_inscricao->store_result();
 
 if ($stmt_verifica_inscricao->num_rows > 0) {
-    // Exibe a mensagem de que já está inscrito no curso
     ?>
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -59,7 +55,6 @@ if ($stmt_verifica_inscricao->num_rows > 0) {
     exit();
 }
 
-// Verifica se o usuário já está inscrito em um curso no mesmo horário
 $sql_verifica_horario = "
     SELECT c.id 
     FROM inscricoes i
@@ -76,7 +71,6 @@ $stmt_verifica_horario->execute();
 $stmt_verifica_horario->store_result();
 
 if ($stmt_verifica_horario->num_rows > 0) {
-    // Exibe a mensagem de erro de inscrição
     ?>
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -102,23 +96,19 @@ if ($stmt_verifica_horario->num_rows > 0) {
     exit();
 }
 
-// Insere a inscrição no banco de dados
 $sql_inscricao = "INSERT INTO inscricoes (usuario_id, curso_id) VALUES (?, ?)";
 $stmt_inscricao = $conn->prepare($sql_inscricao);
 $stmt_inscricao->bind_param("ii", $usuario_id, $curso_id);
 
 if ($stmt_inscricao->execute()) {
-    // Busca os dados do curso para exibir na confirmação
     $sql_curso = "SELECT titulo, data_inicio, data_fim FROM cursos WHERE id = ?";
     $stmt_curso = $conn->prepare($sql_curso);
     $stmt_curso->bind_param("i", $curso_id);
     $stmt_curso->execute();
     $curso = $stmt_curso->get_result()->fetch_assoc();
-    
-    // Atribui 5 pontos ao usuário
+
     $pontos = 5;
 
-    // Verifica se o usuário já possui pontos registrados
     $sql_check_pontuacao = "SELECT id FROM pontuacao WHERE usuario_id = ?";
     $stmt_check_pontuacao = $conn->prepare($sql_check_pontuacao);
     $stmt_check_pontuacao->bind_param("i", $usuario_id);
@@ -126,20 +116,17 @@ if ($stmt_inscricao->execute()) {
     $stmt_check_pontuacao->store_result();
 
     if ($stmt_check_pontuacao->num_rows > 0) {
-        // Se o usuário já tem pontos, atualiza os pontos existentes
         $sql_update_pontos = "UPDATE pontuacao SET pontos = pontos + ? WHERE usuario_id = ?";
         $stmt_update_pontos = $conn->prepare($sql_update_pontos);
         $stmt_update_pontos->bind_param("ii", $pontos, $usuario_id);
         $stmt_update_pontos->execute();
     } else {
-        // Se o usuário não tem pontos, insere uma nova entrada
         $sql_insert_pontos = "INSERT INTO pontuacao (usuario_id, pontos) VALUES (?, ?)";
         $stmt_insert_pontos = $conn->prepare($sql_insert_pontos);
         $stmt_insert_pontos->bind_param("ii", $usuario_id, $pontos);
         $stmt_insert_pontos->execute();
     }
-
-    // Exibe a mensagem de confirmação
+    
     ?>
     <!DOCTYPE html>
     <html lang="pt-br">

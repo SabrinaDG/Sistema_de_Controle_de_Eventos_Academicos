@@ -1,30 +1,24 @@
 <?php
 session_start();
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.html'); // Redireciona para a página de login se não estiver logado
+    header('Location: login.html');
     exit();
 }
 
-// Conexão com o banco de dados
 require 'connect.inc.php';
 
-// Exibe o nome do usuário logado
 $username = $_SESSION['username'];
 
-// Verifica se um evento foi selecionado para exibir os cursos associados
 $evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : null;
 
 if ($evento_id) {
-    // Recupera os cursos associados ao evento selecionado
     $sql_cursos = "SELECT * FROM cursos WHERE evento_id = ?";
     $stmt_cursos = $conn->prepare($sql_cursos);
     $stmt_cursos->bind_param("i", $evento_id);
     $stmt_cursos->execute();
     $cursos = $stmt_cursos->get_result();
 } else {
-    // Recupera todos os eventos
     $sql_eventos = "SELECT * FROM eventos";
     $eventos = $conn->query($sql_eventos);
 }

@@ -25,9 +25,6 @@ class Usuarios {
     
         return true;
     }
-    
-    
-
     public function matriculaExists($matricula) {
         $matricula = $this->conn->real_escape_string($matricula);
         $sql = "SELECT id FROM Usuarios WHERE matricula = '$matricula'";
@@ -36,14 +33,11 @@ class Usuarios {
     }
 }
 
-// Variável para armazenar mensagens de erro
 $error_message = '';
 
-// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = new Usuarios($conn);
 
-    // Verifica se a matrícula já existe
     if ($usuario->matriculaExists($_POST['matricula'])) {
         $error_message = "A matrícula já está em uso.";
     } else {
@@ -57,6 +51,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Inclui a página de cadastro para exibir erros
 include 'cadastro_usuario.html';
 ?>

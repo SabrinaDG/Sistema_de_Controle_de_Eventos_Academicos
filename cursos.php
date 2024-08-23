@@ -2,24 +2,20 @@
 session_start();
 require 'connect.inc.php';
 
-// Função para formatar a data e hora no formato dd/mm/aaaa hh:mm
 function format_datetime($datetime) {
     try {
-        $dateTime = new DateTime($datetime); // Cria um objeto DateTime a partir da string fornecida
-        return $dateTime->format('d/m/Y H:i'); // Formata a data e hora no formato desejado
+        $dateTime = new DateTime($datetime); 
+        return $dateTime->format('d/m/Y H:i');
     } catch (Exception $e) {
-        // Em caso de erro, retorna uma mensagem de erro ou um valor padrão
         return 'Data inválida';
     }
 }
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.html'); // Redireciona para a página de login se não estiver logado
+    header('Location: login.html'); 
     exit();
 }
 
-// Verifica se o ID do evento foi fornecido
 if (!isset($_GET['evento_id'])) {
     echo "ID do evento não fornecido.";
     exit();
@@ -27,7 +23,6 @@ if (!isset($_GET['evento_id'])) {
 
 $evento_id = intval($_GET['evento_id']);
 
-// Busca informações do evento
 $sql_evento = "SELECT * FROM eventos WHERE id = ?";
 $stmt_evento = $conn->prepare($sql_evento);
 $stmt_evento->bind_param("i", $evento_id);
@@ -39,7 +34,6 @@ if (!$evento) {
     exit();
 }
 
-// Busca cursos associados ao evento
 $sql_cursos = "SELECT * FROM cursos WHERE evento_id = ?";
 $stmt_cursos = $conn->prepare($sql_cursos);
 $stmt_cursos->bind_param("i", $evento_id);

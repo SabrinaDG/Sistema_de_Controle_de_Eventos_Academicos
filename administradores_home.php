@@ -1,50 +1,38 @@
 <?php
 session_start();
-require 'connect.inc.php'; // Inclua o arquivo de conexão
+require 'connect.inc.php';
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
-  header('Location: login.html'); // Redireciona para a página de login se não estiver logado
+  header('Location: login.html');
   exit();
 }
 
-// Exibe o nome do usuário logado
 $username = $_SESSION['username'];
 
-$limit = 10; // Número de itens por página
+$limit = 10;
 
-// Página atual para eventos
 $page_eventos = isset($_GET['page_eventos']) ? (int) $_GET['page_eventos'] : 1;
 $offset_eventos = ($page_eventos - 1) * $limit;
 
-// Página atual para cursos
 $page_cursos = isset($_GET['page_cursos']) ? (int) $_GET['page_cursos'] : 1;
 $offset_cursos = ($page_cursos - 1) * $limit;
 
-
-
-// Busca eventos com paginação
 $sql_events = "SELECT * FROM eventos LIMIT $limit OFFSET $offset_eventos";
 $events_result = $conn->query($sql_events);
 
-// Contar o total de eventos para calcular o número total de páginas
 $sql_count_events = "SELECT COUNT(*) AS total FROM eventos";
 $total_events_result = $conn->query($sql_count_events);
 $total_events = $total_events_result->fetch_assoc()['total'];
 $total_pages_events = ceil($total_events / $limit);
 
-// Busca cursos com paginação
 $sql_courses = "SELECT * FROM cursos LIMIT $limit OFFSET $offset_cursos";
 $courses_result = $conn->query($sql_courses);
 
-// Contar o total de cursos para calcular o número total de páginas
 $sql_count_courses = "SELECT COUNT(*) AS total FROM cursos";
 $total_courses_result = $conn->query($sql_count_courses);
 $total_courses = $total_courses_result->fetch_assoc()['total'];
 $total_pages_courses = ceil($total_courses / $limit);
 
-
-// Função para formatar a data e hora no formato dd/mm/aaaa hh:mm
 function format_datetime($datetime)
 {
   $dateTime = new DateTime($datetime);
@@ -56,11 +44,9 @@ function format_datetime($datetime)
 <html lang="pt-br">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
   <title>Página Principal</title>
@@ -121,13 +107,11 @@ function format_datetime($datetime)
     <!-- Conteúdo da página -->
     <h1>Bem-vindo, administrador <?php echo htmlspecialchars($username); ?>!</h1>
 
-    <!-- Botões para Gerenciar Eventos e Cursos -->
     <div class="mt-4">
       <a href="gerenciar_eventos.php" class="btn btn-primary mr-2">Gerenciar Eventos</a>
       <a href="gerenciar_cursos.php" class="btn btn-secondary">Gerenciar Cursos</a>
     </div>
 
-    <!-- Tabela de Eventos -->
     <h2 class="mt-5">Eventos</h2>
     <table class="table table-striped">
       <thead>
@@ -151,16 +135,14 @@ function format_datetime($datetime)
         <?php endwhile; ?>
       </tbody>
     </table>
-    <!-- Paginação para Eventos -->
+
     <nav aria-label="Page navigation for events">
       <ul class="pagination">
         <li class="page-item <?php if ($page_eventos <= 1)
           echo 'disabled'; ?>">
-          <a class="page-link"
-            href="<?php if ($page_eventos > 1) {
-              echo "?page_eventos=" . ($page_eventos - 1) . "&page_cursos=$page_cursos";
-            } ?>"
-            aria-label="Previous">
+          <a class="page-link" href="<?php if ($page_eventos > 1) {
+            echo "?page_eventos=" . ($page_eventos - 1) . "&page_cursos=$page_cursos";
+          } ?>" aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
@@ -173,19 +155,15 @@ function format_datetime($datetime)
         <?php endfor; ?>
         <li class="page-item <?php if ($page_eventos >= $total_pages_events)
           echo 'disabled'; ?>">
-          <a class="page-link"
-            href="<?php if ($page_eventos < $total_pages_events) {
-              echo "?page_eventos=" . ($page_eventos + 1) . "&page_cursos=$page_cursos";
-            } ?>"
-            aria-label="Next">
+          <a class="page-link" href="<?php if ($page_eventos < $total_pages_events) {
+            echo "?page_eventos=" . ($page_eventos + 1) . "&page_cursos=$page_cursos";
+          } ?>" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
       </ul>
     </nav>
 
-
-    <!-- Tabela de Cursos -->
     <h2 class="mt-5">Cursos</h2>
     <table class="table table-striped">
       <thead>
@@ -208,7 +186,6 @@ function format_datetime($datetime)
             <td><?php echo format_datetime($row['data_fim']); ?></td>
             <td>
               <?php
-              // Buscar título do evento associado
               $evento_id = $row['evento_id'];
               $sql_event = "SELECT titulo FROM eventos WHERE id = ?";
               $stm = $conn->prepare($sql_event);
@@ -223,16 +200,14 @@ function format_datetime($datetime)
         <?php endwhile; ?>
       </tbody>
     </table>
-    <!-- Paginação para Cursos -->
+
     <nav aria-label="Page navigation for courses">
       <ul class="pagination">
         <li class="page-item <?php if ($page_cursos <= 1)
           echo 'disabled'; ?>">
-          <a class="page-link"
-            href="<?php if ($page_cursos > 1) {
-              echo "?page_cursos=" . ($page_cursos - 1) . "&page_eventos=$page_eventos";
-            } ?>"
-            aria-label="Previous">
+          <a class="page-link" href="<?php if ($page_cursos > 1) {
+            echo "?page_cursos=" . ($page_cursos - 1) . "&page_eventos=$page_eventos";
+          } ?>" aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
@@ -245,11 +220,9 @@ function format_datetime($datetime)
         <?php endfor; ?>
         <li class="page-item <?php if ($page_cursos >= $total_pages_courses)
           echo 'disabled'; ?>">
-          <a class="page-link"
-            href="<?php if ($page_cursos < $total_pages_courses) {
-              echo "?page_cursos=" . ($page_cursos + 1) . "&page_eventos=$page_eventos";
-            } ?>"
-            aria-label="Next">
+          <a class="page-link" href="<?php if ($page_cursos < $total_pages_courses) {
+            echo "?page_cursos=" . ($page_cursos + 1) . "&page_eventos=$page_eventos";
+          } ?>" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

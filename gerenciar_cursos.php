@@ -16,11 +16,9 @@ function validateCourseDates($conn, $evento_id, $data_inicio, $data_fim)
         $data_inicio_evento = $evento['data_inicio'];
         $data_fim_evento = $evento['data_fim'];
 
-        // Formata as datas para datetime-local
         $data_inicio_evento_formatted = format_for_datetime_local($data_inicio_evento);
         $data_fim_evento_formatted = format_for_datetime_local($data_fim_evento);
 
-        // Verifica se as datas do curso estão dentro do intervalo do evento
         if ($data_inicio < $data_inicio_evento || $data_fim > $data_fim_evento) {
             return array(
                 'valid' => false,
@@ -37,8 +35,6 @@ function format_for_datetime_local($datetime)
     $dateTime = new DateTime($datetime);
     return $dateTime->format('d/m/Y H:i');
 }
-
-// Função para adicionar ou atualizar curso
 function saveCourse($conn, $id = null, $titulo, $descricao, $data_inicio, $data_fim, $evento_id)
 {
     $validation = validateCourseDates($conn, $evento_id, $data_inicio, $data_fim);
@@ -64,7 +60,6 @@ function saveCourse($conn, $id = null, $titulo, $descricao, $data_inicio, $data_
     return $stm->execute();
 }
 
-// Adiciona ou atualiza curso
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'] ?? null;
     $titulo = $_POST['titulo'];
@@ -80,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Exclui curso
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $sql = "DELETE FROM cursos WHERE id = ?";
@@ -93,12 +87,10 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// Paginação
-$limit = 5; // Número de cursos por página
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 5;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Busca cursos e eventos para seleção
 $sql = "SELECT * FROM cursos LIMIT ?, ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $offset, $limit);
@@ -204,20 +196,22 @@ $events = $conn->query($sql);
                 <?php endwhile; ?>
             </tbody>
         </table>
-        <!-- Navegação de paginação -->
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+                <li class="page-item <?php if ($page <= 1)
+                    echo 'disabled'; ?>">
                     <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                    <li class="page-item <?php if ($i == $page)
+                        echo 'active'; ?>">
                         <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php endfor; ?>
-                <li class="page-item <?php if ($page >= $total_pages) echo 'disabled'; ?>">
+                <li class="page-item <?php if ($page >= $total_pages)
+                    echo 'disabled'; ?>">
                     <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
