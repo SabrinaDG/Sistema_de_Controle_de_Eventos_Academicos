@@ -14,7 +14,28 @@ function format_datetime($datetime) {
 
 $usuario_id = $_SESSION['user_id']; // ID do usuário logado
 
-// Consulta para obter as inscrições do usuário logado, cursos e eventos
+// Definir o número de registros por página
+$registros_por_pagina = 5;
+
+// Verificar se o parâmetro de página foi definido na URL
+$pagina_atual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+
+// Calcular o offset
+$offset = ($pagina_atual - 1) * $registros_por_pagina;
+
+// Consulta para obter o total de inscrições do usuário logado
+$sql_total = "
+    SELECT COUNT(*) AS total
+    FROM inscricoes i
+    WHERE i.usuario_id = ?
+";
+$stmt_total = $conn->prepare($sql_total);
+$stmt_total->bind_param("i", $usuario_id);
+$stmt_total->execute();
+$result_total = $stmt_total->get_result();
+$total_registros = $result_total->fetch_assoc()['total'];
+
+// Consulta para obter as inscrições do usuário logado com paginação
 $sql_relatorio = "
     SELECT c.titulo AS curso_titulo, e.titulo AS evento_titulo, 
            c.data_inicio AS curso_data_inicio, c.data_fim AS curso_data_fim
@@ -23,12 +44,15 @@ $sql_relatorio = "
     JOIN eventos e ON c.evento_id = e.id
     WHERE i.usuario_id = ?
     ORDER BY c.data_inicio
+    LIMIT ? OFFSET ?
 ";
-
 $stmt_relatorio = $conn->prepare($sql_relatorio);
-$stmt_relatorio->bind_param("i", $usuario_id);
+$stmt_relatorio->bind_param("iii", $usuario_id, $registros_por_pagina, $offset);
 $stmt_relatorio->execute();
 $resultado = $stmt_relatorio->get_result();
+
+// Calcular o total de páginas
+$total_paginas = ceil($total_registros / $registros_por_pagina);
 ?>
 
 <!DOCTYPE html>
@@ -68,6 +92,34 @@ $resultado = $stmt_relatorio->get_result();
             <?php endif; ?>
         </tbody>
     </table>
+
+    <!-- Paginação -->
+    <nav aria-label="Navegação de página">
+        <ul class="pagination justify-content-center">
+            <?php if ($pagina_atual > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?pagina=<?php echo $pagina_atual - 1; ?>" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                <li class="page-item <?php if ($i == $pagina_atual) echo 'active'; ?>">
+                    <a class="page-link" href="?pagina=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+
+            <?php if ($pagina_atual < $total_paginas): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?pagina=<?php echo $pagina_atual + 1; ?>" aria-label="Próxima">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+
     <a href="home.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
 </div>
 

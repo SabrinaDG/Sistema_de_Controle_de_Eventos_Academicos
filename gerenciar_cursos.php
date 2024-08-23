@@ -94,7 +94,7 @@ if (isset($_GET['delete'])) {
 }
 
 // Paginação
-$limit = 2; // Número de cursos por página
+$limit = 5; // Número de cursos por página
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 

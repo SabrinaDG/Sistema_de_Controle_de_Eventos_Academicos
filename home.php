@@ -125,6 +125,7 @@ if ($evento_id) {
     <?php else: ?>
         <!-- Exibe a lista de eventos disponíveis -->
         <h2>Eventos Disponíveis</h2>
+        <div style="overflow-x: auto;"> <!-- Adicionando a div para a rolagem -->
         <div class="row">
             <?php while ($evento = $eventos->fetch_assoc()): ?>
                 <div class="col-md-4 mb-4">
@@ -137,6 +138,7 @@ if ($evento_id) {
                     </div>
                 </div>
             <?php endwhile; ?>
+        </div>
         </div>
     <?php endif; ?>
 </div>

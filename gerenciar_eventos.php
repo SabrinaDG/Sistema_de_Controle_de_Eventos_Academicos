@@ -77,7 +77,7 @@ $total_row = $total_result->fetch_assoc();
 $total_events = $total_row['total'];
 
 // Configurações de paginação
-$limit = 1; // Número de eventos por página
+$limit = 5; // Número de eventos por página
 $total_pages = ceil($total_events / $limit);
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($current_page - 1) * $limit;

@@ -6,14 +6,32 @@ function format_datetime($datetime) {
     return date("d/m/Y H:i", strtotime($datetime));
 }
 
-// Consulta para obter todos os cursos e eventos
+// Definir o número de registros por página
+$registros_por_pagina = 5;
+
+// Verificar se o parâmetro de página foi definido na URL
+$pagina_atual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+
+// Calcular o offset
+$offset = ($pagina_atual - 1) * $registros_por_pagina;
+
+// Consulta para obter o total de registros
+$sql_total = "SELECT COUNT(*) AS total FROM cursos";
+$result_total = $conn->query($sql_total);
+$total_registros = $result_total->fetch_assoc()['total'];
+
+// Consulta para obter os cursos e eventos com paginação
 $sql_cursos = "
     SELECT c.id, c.titulo AS curso_titulo, e.titulo AS evento_titulo, 
            c.data_inicio, c.data_fim
     FROM cursos c
     JOIN eventos e ON c.evento_id = e.id
+    LIMIT $registros_por_pagina OFFSET $offset
 ";
 $result_cursos = $conn->query($sql_cursos);
+
+// Calcular o total de páginas
+$total_paginas = ceil($total_registros / $registros_por_pagina);
 ?>
 
 <!DOCTYPE html>
@@ -55,6 +73,34 @@ $result_cursos = $conn->query($sql_cursos);
             <?php endif; ?>
         </tbody>
     </table>
+
+    <!-- Paginação -->
+    <nav aria-label="Navegação de página">
+        <ul class="pagination justify-content-center">
+            <?php if ($pagina_atual > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?pagina=<?php echo $pagina_atual - 1; ?>" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                <li class="page-item <?php if ($i == $pagina_atual) echo 'active'; ?>">
+                    <a class="page-link" href="?pagina=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+
+            <?php if ($pagina_atual < $total_paginas): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?pagina=<?php echo $pagina_atual + 1; ?>" aria-label="Próxima">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+
     <a href="administradores_home.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
 </div>
 
