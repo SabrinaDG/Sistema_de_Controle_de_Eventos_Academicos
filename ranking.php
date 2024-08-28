@@ -56,7 +56,7 @@ $total_paginas = ceil($total_registros / $registros_por_pagina);
             </thead>
             <tbody>
                 <?php if ($result_ranking->num_rows > 0): ?>
-                    <?php $posicao = $offset + 1; // Posição inicial para a página atual ?>
+                    <?php $posicao = $offset + 1;  ?>
                     <?php while ($row = $result_ranking->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $posicao++; ?></td>

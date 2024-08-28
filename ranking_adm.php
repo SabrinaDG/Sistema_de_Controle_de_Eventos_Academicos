@@ -23,7 +23,7 @@ $sql_count = "
 
 $result_count = $conn->query($sql_count);
 $total_rows = $result_count->fetch_assoc()['total'];
-$total_pages = ceil($total_rows / $limit); // Total de páginas
+$total_pages = ceil($total_rows / $limit); 
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +50,7 @@ $total_pages = ceil($total_rows / $limit); // Total de páginas
             </thead>
             <tbody>
                 <?php if ($result_ranking->num_rows > 0): ?>
-                    <?php $posicao = $offset + 1; // Ajusta a posição com base no deslocamento ?>
+                    <?php $posicao = $offset + 1;  ?>
                     <?php while ($row = $result_ranking->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $posicao++; ?></td>

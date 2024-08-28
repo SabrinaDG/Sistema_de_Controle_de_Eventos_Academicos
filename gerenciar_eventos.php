@@ -16,6 +16,12 @@ function saveEvent($conn, $id = null, $titulo, $descricao, $data_inicio, $data_f
     return $stm->execute();
 }
 
+function format_for_datetime_local($datetime)
+{
+    $dateTime = new DateTime($datetime);
+    return $dateTime->format('d/m/Y H:i');
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'] ?? null;
     $titulo = $_POST['titulo'];
@@ -130,8 +136,8 @@ $events = fetchEvents($conn, $limit, $offset);
                             <td><?= htmlspecialchars($row['id']) ?></td>
                             <td><?= htmlspecialchars($row['titulo']) ?></td>
                             <td><?= htmlspecialchars($row['descricao']) ?></td>
-                            <td><?= htmlspecialchars($row['data_inicio']) ?></td>
-                            <td><?= htmlspecialchars($row['data_fim']) ?></td>
+                            <td><?= htmlspecialchars(format_for_datetime_local($row['data_inicio'])) ?></td>
+                            <td><?= htmlspecialchars(format_for_datetime_local($row['data_fim'])) ?></td>
                             <td>
                                 <a href="gerenciar_eventos.php?delete=<?= htmlspecialchars($row['id']) ?>"
                                     class="btn btn-danger btn-sm"

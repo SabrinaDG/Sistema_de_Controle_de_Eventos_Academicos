@@ -84,7 +84,6 @@ if ($evento_id) {
     <h1>Bem-vindo, <?php echo htmlspecialchars($username); ?>!</h1>
 
     <?php if ($evento_id): ?>
-        <!-- Exibe os cursos associados ao evento -->
         <h2>Cursos do Evento</h2>
         <?php if ($cursos->num_rows > 0): ?>
             <table class="table table-striped">
@@ -117,9 +116,8 @@ if ($evento_id) {
             <p>Nenhum curso disponível para este evento.</p>
         <?php endif; ?>
     <?php else: ?>
-        <!-- Exibe a lista de eventos disponíveis -->
         <h2>Eventos Disponíveis</h2>
-        <div style="overflow-x: auto;"> <!-- Adicionando a div para a rolagem -->
+        <div style="overflow-x: auto;"> 
         <div class="row">
             <?php while ($evento = $eventos->fetch_assoc()): ?>
                 <div class="col-md-4 mb-4">

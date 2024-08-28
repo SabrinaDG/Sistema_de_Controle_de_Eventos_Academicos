@@ -91,11 +91,9 @@
             success: function (response) {
               if (response.status === "success") {
                 console.log("Logado com sucesso");
-                // Redireciona para a página principal após o login
                 window.location.href = response.redirect;
               } else {
                 console.error("Erro:", response.message);
-                // Exibir mensagem de erro no front-end
                 alert(response.message);
               }
             },

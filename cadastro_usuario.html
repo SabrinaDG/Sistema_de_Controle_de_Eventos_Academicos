@@ -17,7 +17,6 @@
     <title>Cadastro de Usuário</title>
 
     <script>
-      // Função para validar a matrícula
       function validarFormulario(event) {
         var matricula = document.getElementById("matricula").value;
         var errorMensagem = "";
@@ -26,7 +25,6 @@
           errorMensagem = "A matrícula deve ter exatamente 4 dígitos.";
         }
 
-        // Exibe a mensagem de erro se necessário
         var errorElement = document.getElementById("matriculaError");
         if (errorMensagem) {
           errorElement.textContent = errorMensagem;
